@@ -1,89 +1,234 @@
-# Sales Report Consolidator
+# Supplier File Formatter
 
-## About
+A Python automation tool that standardizes supplier inventory files into a consistent business-ready format. It renames supplier-specific columns, cleans missing values, converts numeric data, removes duplicate records, calculates inventory value, sorts the results, and exports a formatted CSV report.
 
-Managing sales reports from multiple branches or different months can quickly become time-consuming and error-prone. This project automatically combines multiple sales CSV files into a single dataset and generates summary reports showing total quantities sold, average quantities, and the number of sales per product. It helps businesses consolidate sales data in seconds, reducing manual work and improving reporting accuracy.
+## What This Project Does
 
-## Key Features
+Supplier files often arrive with inconsistent column names, missing values, duplicate records, and different data formats.
 
-* **Automatic CSV Merging:** Combines multiple sales CSV files into one consolidated dataset.
-* **Sales Summary Generation:** Calculates total quantity sold, average quantity sold, and number of sales for every product.
-* **Business Statistics:** Displays useful insights such as highest sale, lowest sale, average sale quantity, and total number of records.
-* **Fast Batch Processing:** Processes multiple monthly sales reports automatically.
-* **Business-Ready Output:** Exports both the merged dataset and summary report as clean CSV files.
-* **Modular Python Design:** Uses reusable functions to make the code easy to understand, maintain, and extend.
+This project automates the standardization process.
+
+The script:
+
+1. Loads a supplier inventory CSV file.
+2. Maps supplier-specific column names to a standard schema.
+3. Handles missing categories and quantities.
+4. Converts numeric fields to the correct data types.
+5. Removes duplicate records.
+6. Calculates total inventory value for each product.
+7. Sorts the final dataset by product name.
+8. Calculates inventory summary statistics.
+9. Exports the standardized dataset as a CSV report.
 
 ## Technologies Used
 
-* Python 3
+* Python
 * Pandas
-* Glob
-* Pathlib
-* CSV Files
+* CSV
+* Type hints
+* Functions
+* Dictionary-based column mapping
 
-## Folder Structure
+## Project Structure
 
 ```text
-sales-report-consolidator/
-│
-├── README.md
-├── sales_report_consolidator.py
-│
-├── sample_data/
-│   ├── january.csv
-│   ├── february.csv
-│   └── march.csv
+supplier-file-formatter/
 │
 ├── output/
-│   ├── merged_sales.csv
-│   └── sales_summary.csv
+│   └── formatted_supplier_inventory.csv
 │
-└── screenshots/
-    ├── original-files.png
-    ├── merged-report.png
-    ├── summary-report.png
-    └── terminal-output.png
+├── sample_data/
+│   └── supplier_inventory.csv
+│
+├── screenshots/
+│   ├── 01_code_setup.png
+│   ├── 02_processing_reporting.png
+│   └── 03_successful_execution.png
+│
+├── README.md
+└── supplier-file-formatter.py
 ```
+
+## Example Input
+
+The supplier file uses supplier-specific column names:
+
+```csv
+Item,Dept,Qty,UnitPrice
+Milk,Dairy,20,65
+Bread,Bakery,,80
+Sugar,Grocery,40,180
+Rice,,25,210
+Eggs,Poultry,60,15
+Milk,Dairy,20,65
+```
+
+The dataset intentionally contains:
+
+* Different column names
+* A missing quantity
+* A missing department
+* A duplicate Milk record
+
+## Column Standardization
+
+The script uses a reusable mapping dictionary:
+
+```python
+COLUMN_MAP = {
+    "Item": "Product",
+    "Dept": "Category",
+    "Qty": "Quantity",
+    "UnitPrice": "Price",
+}
+```
+
+This allows supplier-specific column names to be converted into a standard business schema without rewriting the processing logic.
+
+## Data Cleaning
+
+The formatter handles several common data-quality problems.
+
+### Missing values
+
+Missing categories are replaced with:
+
+```text
+Unknown
+```
+
+Missing quantities are replaced with:
+
+```text
+0
+```
+
+### Data types
+
+Quantity and price values are converted to numeric types so they can be used reliably in calculations.
+
+### Duplicate records
+
+Duplicate inventory records are removed automatically.
+
+## Calculated Business Metric
+
+The script creates a `Total Value` column:
+
+```text
+Total Value = Quantity × Price
+```
+
+For example:
+
+```text
+Sugar
+Quantity: 40
+Price: 180
+Total Value: 7,200
+```
+
+## Generated Output
+
+The processed file is saved as:
+
+```text
+output/formatted_supplier_inventory.csv
+```
+
+Example output:
+
+```csv
+Product,Category,Quantity,Price,Total Value
+Bread,Bakery,0,80,0
+Eggs,Poultry,60,15,900
+Milk,Dairy,20,65,1300
+Rice,Unknown,25,210,5250
+Sugar,Grocery,40,180,7200
+```
+
+## Example Summary
+
+For the included sample dataset, the script produces:
+
+```text
+Dataset Shape:             (5, 5)
+Total Inventory Value:     14,650
+Top Product by Value:      Sugar (7,200)
+Average Item Quantity:     29.00
+```
+
+The original dataset contains six rows, but the duplicate Milk record is removed during processing, producing a final dataset of five rows.
 
 ## How to Run
 
-1. Install Python 3.
-2. Install Pandas:
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/georgesorrowist170-sudo/supplier-file-formatter.git
+```
+
+### 2. Install Pandas
 
 ```bash
 pip install pandas
 ```
 
-3. Run the program:
+### 3. Run the script
 
 ```bash
-python sales_report_consolidator.py
+python supplier-file-formatter.py
 ```
 
-4. The program automatically merges the sales reports and generates:
+The formatted report will be generated at:
 
-* `merged_sales.csv`
-* `sales_summary.csv`
+```text
+output/formatted_supplier_inventory.csv
+```
 
-## Example Output
+## Screenshots
 
-### Sales Summary
+### Code Setup
 
- Product  Total Quantity  Average Quantity  Number of Sales 
- -------  -------------:  ---------------:  --------------: 
- Bread                25             12.50                2 
- Eggs                 60             60.00                1 
- Milk                 50             25.00                2 
- Rice                 25             25.00                1 
- Sugar                40             40.00                1 
+![Code Setup](./screenshots/01_code_setup.png)
 
-## Future Improvements
+### Processing and Reporting
 
-* Support Excel (.xlsx) sales reports.
-* Generate PDF sales reports automatically.
-* Allow users to select the input folder from the command line.
-* Add charts showing product sales trends.
-* Build a simple graphical user interface (GUI).
+![Processing and Reporting](./screenshots/02_processing_reporting.png)
+
+### Successful Execution
+
+![Successful Execution](./screenshots/03_successful_execution.png)
+
+## Skills Demonstrated
+
+This project demonstrates practical Python automation skills including:
+
+* Functions
+* Type hints
+* Pandas DataFrames
+* CSV processing
+* Dictionary-based column mapping
+* Data cleaning
+* Missing-value handling
+* Numeric type conversion
+* Duplicate removal
+* DataFrame sorting
+* Calculated business metrics
+* Statistical calculations
+* CSV report generation
+* File handling
+* Modular Python program design
+
+## Business Use Case
+
+This type of automation can be used when businesses receive inventory or supplier files from different sources that use inconsistent formats.
+
+Instead of manually correcting every file, the formatter can standardize the data into a predictable structure that is easier to analyze, store, and process with other business systems.
+
+## Purpose
+
+This project was built as a practical example of automating supplier-file standardization and inventory data preparation using Python and Pandas.
 
 
 
